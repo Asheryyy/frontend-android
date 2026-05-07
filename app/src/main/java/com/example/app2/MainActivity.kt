@@ -47,6 +47,9 @@ class MainActivity : AppCompatActivity() {
     private val weatherEntries = mutableListOf<Entry>()
     private val weatherLabels = mutableListOf<String>()
     private var weatherIndex = 0f
+    private lateinit var btnChangePassword: Button // ← Thêm dòng này
+    private lateinit var weatherChart: LineChart
+
 
     object Config {
         const val BASE_URL = "https://api-tuoi-cay-g0g2cdfmbkc7dubq.southeastasia-01.azurewebsites.net/"
@@ -64,6 +67,9 @@ class MainActivity : AppCompatActivity() {
         btnWater = findViewById(R.id.btnWater)
         btnHistory = findViewById(R.id.btnHistory) // ← THÊM DÒNG NÀY
         lineChart = findViewById(R.id.lineChart)  // ← Thêm
+        btnChangePassword = findViewById(R.id.btnChangePassword) // ← Thêm khai báo
+        weatherChart = findViewById(R.id.weatherChart) // ← Thêm
+        setupWeatherChart()
 
         setupSignalR()
         globalToken = intent.getStringExtra("TOKEN") ?: ""
@@ -82,6 +88,11 @@ class MainActivity : AppCompatActivity() {
                 sendPumpControl(status)
                 isPumping = !isPumping
             }
+        }
+        btnChangePassword.setOnClickListener {
+            val intent = Intent(this, ChangePasswordActivity::class.java)
+            intent.putExtra("TOKEN", globalToken)
+            startActivity(intent)
         }
 
         // ← THÊM ĐOẠN NÀY
@@ -113,22 +124,6 @@ class MainActivity : AppCompatActivity() {
             setScaleEnabled(true)
             setPinchZoom(true)
             animateX(500)
-            axisLeft.apply {
-                axisMinimum = 20f  // Nhiệt độ HCM thường từ 20°C
-                axisMaximum = 45f  // đến 45°C
-                setDrawGridLines(true)
-            }
-            xAxis.apply {
-                valueFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String {
-                        val index = value.toInt()
-                        return if (index >= 0 && index < chartLabels.size)
-                            chartLabels[index] else ""
-                    }
-                }
-                granularity = 1f
-                labelRotationAngle = -45f
-            }
 
             axisLeft.apply {
                 axisMinimum = 0f
@@ -139,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // --- CHỖ SỬA 3: Hàm thiết lập SignalR ---
+    //
     private fun setupSignalR() {
         hubConnection = HubConnectionBuilder
             .create("${Config.BASE_URL}humidityHub")
@@ -172,7 +167,7 @@ class MainActivity : AppCompatActivity() {
         }.start()
     }
 
-    // --- CÁC HÀM CŨ CỦA MÀY GIỮ NGUYÊN ---
+    //
     private fun performLogin(onSuccess: (() -> Unit)? = null) {
         val url = "${Config.BASE_URL}api/Auth/Login"
         val json = """{"userName": "tai", "password": "1234"}"""
@@ -261,6 +256,12 @@ class MainActivity : AppCompatActivity() {
                     runOnUiThread {
                         Toast.makeText(this@MainActivity, "Lệnh đã thực thi!", Toast.LENGTH_SHORT).show()
                         btnWater.text = if (status == 1) "🛑 TẮT TƯỚI CÂY" else "🚿 BẬT TƯỚI CÂY"
+
+                        // ← Thêm dòng này để cập nhật txtData
+                        txtData.text = if (status == 1)
+                            "🖐️ [THỦ CÔNG]\n💧 Máy bơm đang BẬT"
+                        else
+                            "🖐️ [THỦ CÔNG]\n💧 Máy bơm đang TẮT"
                     }
                 }
             }
@@ -355,6 +356,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     updateWeatherChart()
+                    saveWeatherToBackend(temp)
 
                 } catch (e: Exception) {
                     Log.e("WEATHER", "Lỗi parse: ${e.message}")
@@ -365,7 +367,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateWeatherChart() {
         val dataSet = LineDataSet(weatherEntries, "🌡️ Nhiệt độ HCM (°C)").apply {
-            color = android.graphics.Color.parseColor("#E53935") // Màu đỏ
+            color = android.graphics.Color.parseColor("#E53935")
             setCircleColor(android.graphics.Color.parseColor("#E53935"))
             lineWidth = 2f
             circleRadius = 4f
@@ -375,10 +377,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         runOnUiThread {
-            lineChart.data = LineData(dataSet)
-            lineChart.notifyDataSetChanged()
-            lineChart.invalidate()
-            lineChart.moveViewToX(weatherIndex)
+            weatherChart.data = LineData(dataSet) // ← đổi lineChart thành weatherChart
+            weatherChart.notifyDataSetChanged()
+            weatherChart.invalidate()
+            weatherChart.moveViewToX(weatherIndex)
         }
     }
     private fun saveWeatherToBackend(temp: Float) {
@@ -400,8 +402,6 @@ class MainActivity : AppCompatActivity() {
                 Log.d("WEATHER", "Lưu nhiệt độ OK: $temp°C")
             }
         })
-        // Sau dòng updateWeatherChart()
-        saveWeatherToBackend(temp) // ← Lưu lên backend
     }
     private fun loadWeatherHistory() {
         val url = "${Config.BASE_URL}api/Weather"
@@ -437,6 +437,34 @@ class MainActivity : AppCompatActivity() {
                 Log.d("WEATHER", "Load ${jsonArray.length()} bản ghi thành công!")
             }
         })
+    }
+    private fun setupWeatherChart() {
+        weatherChart.apply {
+            description.text = "Nhiệt độ HCM (°C)"
+            description.textSize = 12f
+            setTouchEnabled(true)
+            isDragEnabled = true
+            setScaleEnabled(true)
+
+            xAxis.apply {
+                valueFormatter = object : ValueFormatter() {
+                    override fun getFormattedValue(value: Float): String {
+                        val index = value.toInt()
+                        return if (index >= 0 && index < weatherLabels.size)
+                            weatherLabels[index] else ""
+                    }
+                }
+                granularity = 1f
+                labelRotationAngle = -45f
+            }
+
+            axisLeft.apply {
+                axisMinimum = 20f
+                axisMaximum = 45f
+                setDrawGridLines(true)
+            }
+            axisRight.isEnabled = false
+        }
     }
 
     // Đóng kết nối khi tắt App cho sạch máy

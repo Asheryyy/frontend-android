@@ -22,6 +22,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var btnLogin: Button
     private lateinit var tvGoRegister: TextView
     private val client = getUnsafeOkHttpClient()
+    private lateinit var tvForgotPassword: TextView // ← Thêm dòng này
+    private lateinit var btnChangePassword: Button // ← Thêm dòng này
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +33,7 @@ class LoginActivity : AppCompatActivity() {
         etPassword = findViewById(R.id.etPassword)
         btnLogin = findViewById(R.id.btnLogin)
         tvGoRegister = findViewById(R.id.tvGoRegister)
+        tvForgotPassword = findViewById(R.id.tvForgotPassword)
 
         btnLogin.setOnClickListener {
             val username = etUsername.text.toString().trim()
@@ -45,6 +48,9 @@ class LoginActivity : AppCompatActivity() {
 
         tvGoRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
+        }
+        tvForgotPassword.setOnClickListener {
+            startActivity(Intent(this, ForgotPasswordActivity::class.java))
         }
     }
 
@@ -87,7 +93,7 @@ class LoginActivity : AppCompatActivity() {
                     } else {
                         val errorMsg = try {
                             JSONObject(data ?: "").getString("message")
-                        } catch (e: Exception) { "Đăng nhập thất bại!" }
+                        } catch (e: Exception) { "Đăng nhập thất bại, sai tài khoản hoặc mật khẩu!" }
                         Toast.makeText(this@LoginActivity, errorMsg, Toast.LENGTH_SHORT).show()
                     }
                 }
