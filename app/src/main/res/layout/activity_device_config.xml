@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:gravity="center">
+
+    <TextView
+        android:text="⚙️ CÀI ĐẶT NGƯỠNG TƯỚI"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#2E7D32"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tên thiết bị"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/etDeviceName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="ESP32_Wokwi_Tai"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ngưỡng thấp (kích hoạt tưới)"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/etLowerThreshold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="30"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ngưỡng cao (dừng tưới)"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/etUpperThreshold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="80"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btnSaveConfig"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LƯU CÀI ĐẶT"
+        android:backgroundTint="#2E7D32"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/tvGoBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quay lại"
+        android:textColor="#1976D2"/>
+
+</LinearLayout>

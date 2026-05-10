@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private var weatherIndex = 0f
     private lateinit var btnChangePassword: Button // ← Thêm dòng này
     private lateinit var weatherChart: LineChart
+    private lateinit var btnDeviceConfig: Button
 
 
     object Config {
@@ -99,6 +100,12 @@ class MainActivity : AppCompatActivity() {
         btnHistory.setOnClickListener {
             Log.d("HISTORY", "Bấm nút lịch sử!")
             val intent = Intent(this, HistoryActivity::class.java)
+            intent.putExtra("TOKEN", globalToken)
+            startActivity(intent)
+        }
+        btnDeviceConfig = findViewById(R.id.btnDeviceConfig)
+        btnDeviceConfig.setOnClickListener {
+            val intent = Intent(this, DeviceConfigActivity::class.java)
             intent.putExtra("TOKEN", globalToken)
             startActivity(intent)
         }
