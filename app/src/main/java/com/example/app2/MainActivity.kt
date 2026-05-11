@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnChangePassword: Button // ← Thêm dòng này
     private lateinit var weatherChart: LineChart
     private lateinit var btnDeviceConfig: Button
+    private lateinit var btnPumpHistory: Button
 
 
     object Config {
@@ -108,6 +109,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, DeviceConfigActivity::class.java)
             intent.putExtra("TOKEN", globalToken)
             startActivity(intent)
+        }
+        btnPumpHistory = findViewById(R.id.btnPumpHistory)
+        btnPumpHistory.setOnClickListener {
+            startActivity(Intent(this, PumpHistoryActivity::class.java))
         }
         // Fetch ngay khi mở app
         fetchWeatherAndUpdateChart()

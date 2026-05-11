@@ -60,6 +60,14 @@
             android:text="⚙️ CÀI ĐẶT NGƯỠNG"
             android:backgroundTint="#4CAF50"
             android:layout_marginTop="10dp"/>
+        <!-- Sau btnHistory -->
+        <Button
+            android:id="@+id/btnPumpHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="💧 LỊCH SỬ TƯỚI"
+            android:backgroundTint="#0288D1"/>
 
         <!-- Biểu đồ độ ẩm ESP32 -->
         <TextView
